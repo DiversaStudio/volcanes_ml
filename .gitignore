@@ -1,6 +1,5 @@
-
-/flirpy
 /.venv
+/scripts/flirpy
 /scripts/images
 /scripts/results
 /scripts/checkpoints
