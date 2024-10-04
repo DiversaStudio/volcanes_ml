@@ -367,6 +367,7 @@ def main(args):
             model.load_state_dict(torch.load(checkpoint_path,
                                          map_location=device))
             print('Training restarted from> ',checkpoint_path)
+
         dataset_train = BipedDataset(args.input_dir,
                                      img_width=args.img_width,
                                      img_height=args.img_height,
@@ -375,6 +376,7 @@ def main(args):
                                      train_mode='train',
                                      arg=args
                                      )
+
         dataloader_train = DataLoader(dataset_train,
                                       batch_size=args.batch_size,
                                       shuffle=True,

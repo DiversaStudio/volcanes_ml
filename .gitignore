@@ -1,2 +1,12 @@
 
 /flirpy
+/.venv
+/scripts/images
+/scripts/results
+/scripts/checkpoints
+/scripts/data
+/scripts/Segmentation-Model/__pycache__
+/scripts/Segmentation-Model/checkpoints/BIPED/10
+/scripts/Segmentation-Model/result/
+/scripts/Segmentation-Model/utils/__pycache__
+
