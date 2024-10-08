@@ -11,7 +11,7 @@ Esta carpeta contiene un clon de este repo: https://github.com/xavysp/DexiNed. E
 + __scripts/base_connect__
 Este archivo nos permite crear una base de datos local usando Postgres para almarcenar data sobre las imagenes.
 + __scripts/data_preprocessing__
-Este archivo nos permite normalisar la data de temperatura y visualizar las imagenes.
+Este archivo nos permite normalizar los datos de temperatura y visualizar las imagenes.
 + __scripts/feature__
 Este archivo nos permite segmentar las imagenes con un metodo diferente al de Marigold. 
 + __scripts/Marigold__
