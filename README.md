@@ -20,6 +20,7 @@ git clone https://github.com/DiversaStudio/volcanes_ml.git
 cd volcanes_ml
 
 
+
 2. ## Preparar e Instalar la Librería flirpy
 
 La librería flirpy es necesaria para manejar los datos térmicos en este proyecto. Sigue estos pasos para instalarla:
