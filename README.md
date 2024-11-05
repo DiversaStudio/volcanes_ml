@@ -10,7 +10,7 @@ Para un entorno limpio y organizado, se recomienda utilizar un entorno virtual. 
 
 
 
-1. ## Clonar el repositorio
+## Clonar el repositorio
 
 
 Clona este repositorio en tu máquina local:
@@ -21,13 +21,13 @@ cd volcanes_ml
 
 
 
-2. ## Preparar e Instalar la Librería flirpy
+ Preparar e Instalar la Librería flirpy
 
 La librería flirpy es necesaria para manejar los datos térmicos en este proyecto. Sigue estos pasos para instalarla:
 
 1. ### Clona el repositorio de `flirpy`:
 
-```bash
+
 git clone https://github.com/LJMU-Astroecology/flirpy.git
 cd flirpy
 
@@ -39,7 +39,7 @@ pip install -r requirements.txt
 pip install .
 
 
-3. ### Crear y Activar un Entorno Virtual
+## Crear y Activar un Entorno Virtual
 
 Para aislar las dependencias, crea y activa un entorno virtual con los siguientes comandos:
 En Windows
