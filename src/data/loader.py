@@ -5,6 +5,7 @@ from flirpy.io.fff import Fff
 import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader, TensorDataset
+from src.features.zonal import calculate_zonal_statistics
 
 class ThermalDataLoader:
     """Handles loading and basic processing of FLIR FFF thermal image files."""
@@ -18,15 +19,55 @@ class ThermalDataLoader:
             'skipped_files': {},
             'date_ranges': {}
         }
+ 
+    def process_thermal_image(self, file_path):
+        """Process a single thermal image."""
+        try:
+            # Load FFF file
+            fff_reader = Fff(file_path)
+            raw_image = fff_reader.get_image()
+            
+            # Check if raw image is valid
+            if raw_image is None or np.isnan(raw_image).all():
+                print(f"Skipping {file_path}: Invalid or all NaN values in raw image")
+                return None
+            
+            # Extract metadata
+            metadata = fff_reader.meta
+            metadata['file_path'] = file_path
 
+            # Apply radiometric corrections
+            thermal_image_corrected = self._apply_radiometric_corrections(raw_image, metadata)
+            
+            # Check if corrected image has all NaN values
+            if np.isnan(thermal_image_corrected).all():
+                print(f"Skipping {file_path}: All NaN values after correction")
+                return None
+
+            # Continue processing only if image is valid
+            min_temp = float(metadata['CameraTemperatureRangeMin'])
+            max_temp = float(metadata['CameraTemperatureRangeMax'])
+            thermal_image_clipped = np.clip(thermal_image_corrected, min_temp, max_temp)
+            
+            # Calculate statistics
+            raw_global_stats = calculate_zonal_statistics(raw_image)
+            corrected_global_stats = calculate_zonal_statistics(thermal_image_clipped)
+        
+            return (raw_image, thermal_image_clipped, metadata, raw_global_stats, 
+                    corrected_global_stats)
+                    
+        except Exception as e:
+            print(f"Error processing {file_path}: {str(e)}")
+            return None
+    
     def process_fff_files(self, directory, label):
-        """Process multiple FFF thermal image files from a directory."""
+        """Process multiple FFF files from a directory."""
         data = []
         problematic_files = []
 
         # Get list of FFF files
         fff_files = [f for f in os.listdir(directory) if f.endswith('.fff')]
-        if self.limit_per_directory:
+        if self.limit_per_directory is not None:
             fff_files = fff_files[:self.limit_per_directory]
 
         # Process files with progress bar
@@ -34,59 +75,42 @@ class ThermalDataLoader:
             file_path = os.path.join(directory, filename)
             try:
                 # Process individual image
-                raw_image, corrected_image, metadata, raw_global_stats, \
-                corrected_global_stats, raw_segment_stats, corrected_segment_stats = \
-                    self.process_thermal_image(file_path)
+                result = self.process_thermal_image(file_path)
+                
+                if result is None:
+                    problematic_files.append((filename, "Invalid or NaN image - skipped"))
+                    continue
+                    
+                raw_image, corrected_image, metadata, raw_global_stats, corrected_global_stats = result
 
                 # Extract timestamp
-                timestamp = self._extract_timestamp(metadata, filename)
+                try:
+                    timestamp = self._extract_timestamp(metadata, filename)
+                except ValueError as e:
+                    problematic_files.append((filename, str(e)))
+                    continue
 
                 # Store processed data
                 data.append((
                     timestamp, raw_image, corrected_image, filename, label,
-                    raw_global_stats, corrected_global_stats, raw_segment_stats,
-                    corrected_segment_stats
+                    raw_global_stats, corrected_global_stats
                 ))
 
             except Exception as e:
                 print(f"Error processing file {filename}: {str(e)}")
                 problematic_files.append((filename, str(e)))
 
+        # Report problematic files
         if problematic_files:
             print("\nProblematic files summary:")
             for filename, error in problematic_files:
                 print(f"  {filename}: {error}")
+            print(f"\nTotal skipped files: {len(problematic_files)}")
 
+        print(f"\nSuccessfully processed {len(data)} files from {label}")
+        
+        # Return sorted data by timestamp
         return sorted(data, key=lambda x: x[0])
-
-    def process_thermal_image(self, file_path):
-        """Process a single thermal image from an FFF file."""
-        # Load FFF file
-        fff_reader = Fff(file_path)
-        raw_image = fff_reader.get_image()
-        metadata = fff_reader.meta
-        metadata['file_path'] = file_path
-
-        # Apply radiometric corrections
-        thermal_image_corrected = self._apply_radiometric_corrections(raw_image, metadata)
-
-        # Get temperature range from metadata
-        min_temp = float(metadata['CameraTemperatureRangeMin'])
-        max_temp = float(metadata['CameraTemperatureRangeMax'])
-        thermal_image_clipped = np.clip(thermal_image_corrected, min_temp, max_temp)
-
-        # Calculate statistics
-        from src.features.zonal import calculate_zonal_statistics, segment_image
-        raw_global_stats = calculate_zonal_statistics(raw_image)
-        corrected_global_stats = calculate_zonal_statistics(thermal_image_clipped)
-
-        raw_segments = segment_image(raw_image)
-        corrected_segments = segment_image(thermal_image_clipped)
-        raw_segment_stats = [calculate_zonal_statistics(segment) for segment in raw_segments]
-        corrected_segment_stats = [calculate_zonal_statistics(segment) for segment in corrected_segments]
-
-        return (raw_image, thermal_image_clipped, metadata, raw_global_stats,
-                corrected_global_stats, raw_segment_stats, corrected_segment_stats)
 
     def _extract_timestamp(self, metadata, filename):
         """Extract timestamp from metadata."""
@@ -146,6 +170,9 @@ class ThermalDataLoader:
         # Process each directory
         for directory in self.base_directories:
             try:
+                # Get absolute path
+                directory = os.path.abspath(directory)
+                
                 # Extract and validate label
                 label = os.path.basename(directory)
                 if self.allowed_labels and label not in self.allowed_labels:
@@ -171,60 +198,90 @@ class ThermalDataLoader:
 
         # Sort and remove duplicates
         print("\nFinalizing dataset...")
+        if not all_data:
+            return None
+            
         all_data.sort(key=lambda x: x[0])
         return self.create_tensors(all_data)
 
     def create_tensors(self, sorted_data):
-        """Create tensors from processed data."""
+        """Create tensors from processed data with memory optimization."""
         if not sorted_data:
             raise ValueError("No data to process")
 
         # Get dimensions from first image
         height, width = sorted_data[0][1].shape
+        n_samples = len(sorted_data)
         
-        # Initialize tensors and lists
-        raw_tensor = np.zeros((height, width, len(sorted_data)))
-        corrected_tensor = np.zeros((height, width, len(sorted_data)))
-        timestamps = []
-        filenames = []
-        labels = []
-        raw_global_stats = []
-        corrected_global_stats = []
-        raw_segment_stats = []
-        corrected_segment_stats = []
+        print(f"\nCreating tensors for {n_samples} images...")
+        print(f"Image dimensions: {height}x{width}")
+        
+        # Calculate memory requirements
+        sample_size = height * width * 4  # 4 bytes for float32
+        total_size_gb = (sample_size * n_samples * 2) / (1024**3)  # *2 for raw and corrected
+        print(f"Estimated memory requirement: {total_size_gb:.2f} GB")
 
-        # Fill tensors and lists
-        for i, data in enumerate(sorted_data):
-            timestamps.append(data[0])
-            raw_tensor[:,:,i] = data[1]
-            corrected_tensor[:,:,i] = data[2]
-            filenames.append(data[3])
-            labels.append(data[4])
-            raw_global_stats.append(data[5])
-            corrected_global_stats.append(data[6])
-            raw_segment_stats.append(data[7])
-            corrected_segment_stats.append(data[8])
+        try:
+            # Initialize tensors with float32
+            print("\nAllocating memory...")
+            raw_tensor = np.zeros((height, width, n_samples), dtype=np.float32)
+            corrected_tensor = np.zeros((height, width, n_samples), dtype=np.float32)
+            
+            # Initialize lists
+            timestamps = []
+            filenames = []
+            labels = []
+            raw_global_stats = []
+            corrected_global_stats = []
 
-        return {
-            'tensors': {
-                'raw': raw_tensor,
-                'corrected': corrected_tensor
-            },
-            'metadata': {
-                'timestamps': timestamps,
-                'filenames': filenames,
-                'labels': labels
-            },
-            'statistics': {
-                'raw_global': raw_global_stats,
-                'corrected_global': corrected_global_stats,
-                'raw_segments': raw_segment_stats,
-                'corrected_segments': corrected_segment_stats
-            },
-            'summary': {
-                'total_images': len(sorted_data),
-                'tensor_shape': raw_tensor.shape,
-                'unique_labels': list(set(labels)),
-                **self.dataset_summary
+            # Process in batches
+            batch_size = 500  # Adjust based on your memory
+            for i in range(0, n_samples, batch_size):
+                end_idx = min(i + batch_size, n_samples)
+                print(f"\nProcessing batch {i//batch_size + 1}/{(n_samples + batch_size - 1)//batch_size}")
+                
+                # Process batch
+                batch_data = sorted_data[i:end_idx]
+                for j, data in enumerate(batch_data):
+                    idx = i + j
+                    timestamps.append(data[0])
+                    raw_tensor[:,:,idx] = data[1]
+                    corrected_tensor[:,:,idx] = data[2]
+                    filenames.append(data[3])
+                    labels.append(data[4])
+                    raw_global_stats.append(data[5])
+                    corrected_global_stats.append(data[6])
+
+            return {
+                'tensors': {
+                    'raw': raw_tensor,
+                    'corrected': corrected_tensor
+                },
+                'metadata': {
+                    'timestamps': timestamps,
+                    'filenames': filenames,
+                    'labels': labels
+                },
+                'statistics': {
+                    'raw_global': raw_global_stats,
+                    'corrected_global': corrected_global_stats
+                },
+                'summary': {
+                    'total_images': n_samples,
+                    'tensor_shape': raw_tensor.shape,
+                    'unique_labels': list(set(labels)),
+                    **self.dataset_summary
+                }
             }
-        }
+        
+        except MemoryError as e:
+            print(f"\nMemory Error: Unable to allocate required memory.")
+            print("Consider:")
+            print("1. Reducing the number of images")
+            print("2. Processing in smaller batches")
+            print("3. Using less precision (e.g., float16)")
+            raise e
+
+        except Exception as e:
+            print(f"\nError creating tensors: {str(e)}")
+            raise e

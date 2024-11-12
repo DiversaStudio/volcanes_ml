@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import torch
-from .zonal import segment_image
 
 def apply_canny(image, low_threshold=100, high_threshold=200):
     """Apply Canny edge detection to an image."""
@@ -25,10 +24,8 @@ def process_canny_image(thermal_image):
     canny_image = apply_canny(equalized_image)
     
     global_stats = calculate_edge_statistics(canny_image)
-    segments = segment_image(canny_image)
-    segment_stats = [calculate_edge_statistics(segment) for segment in segments]
     
-    return canny_image, global_stats, segment_stats
+    return canny_image, global_stats
 
 def create_edge_detection_tensors(thermal_tensor):
     """Create edge detection tensor and statistical features from thermal tensor."""
@@ -36,10 +33,9 @@ def create_edge_detection_tensors(thermal_tensor):
     
     edge_tensor = np.zeros((height, width, num_images), dtype=np.uint8)
     edge_features = np.zeros((num_images, 3))
-    segment_features = np.zeros((num_images, 9, 3))
     
     for i in range(num_images):
-        edge_image, global_stats, segment_stats = process_canny_image(thermal_tensor[:,:,i])
+        edge_image, global_stats = process_canny_image(thermal_tensor[:,:,i])
         
         edge_tensor[:,:,i] = edge_image
         edge_features[i] = [
@@ -47,18 +43,10 @@ def create_edge_detection_tensors(thermal_tensor):
             global_stats['total_edges'],
             global_stats['non_zero_ratio']
         ]
-        
-        for j, seg_stats in enumerate(segment_stats):
-            segment_features[i,j] = [
-                seg_stats['edge_density'],
-                seg_stats['total_edges'],
-                seg_stats['non_zero_ratio']
-            ]
     
     return {
         'edge_tensor': edge_tensor,
         'edge_features': edge_features,
-        'segment_features': segment_features,
         'feature_names': ['edge_density', 'total_edges', 'non_zero_ratio'],
         'shape': edge_tensor.shape
     }

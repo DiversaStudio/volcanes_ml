@@ -147,3 +147,29 @@ def visualize_thermal_threshold_comparison(thermal_tensor, timestamps, labels, i
     
     plt.tight_layout()
     plt.show()
+    
+# Plot class distribution
+def plot_class_distribution(train_dataset, val_dataset):
+    plt.figure(figsize=(10, 5))
+    
+    # Get distributions
+    train_labels = [data['label'].item() for data in train_dataset]
+    val_labels = [data['label'].item() for data in val_dataset]
+    
+    unique_labels = sorted(set(train_labels))
+    train_counts = [train_labels.count(l) for l in unique_labels]
+    val_counts = [val_labels.count(l) for l in unique_labels]
+    
+    x = np.arange(len(unique_labels))
+    width = 0.35
+    
+    plt.bar(x - width/2, train_counts, width, label='Train')
+    plt.bar(x + width/2, val_counts, width, label='Validation')
+    
+    plt.xlabel('Classes')
+    plt.ylabel('Number of Samples')
+    plt.title('Class Distribution in Train and Validation Sets')
+    plt.xticks(x, unique_labels)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
