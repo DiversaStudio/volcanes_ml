@@ -8,7 +8,7 @@ Sistema de aprendizaje profundo para el monitoreo automatizado de actividad volc
 - Análisis de tensores multidimensionales para reconocimiento de patrones temporales
 - Detección automatizada de bordes y análisis de umbrales térmicos
 - Integración con PostgreSQL para gestión de metadatos
-- Capacidades de predicción en tiempo real
+- Predicción de nuevas imágenes
 
 ## Arquitectura
 El sistema emplea una arquitectura neural de tres ramas:
