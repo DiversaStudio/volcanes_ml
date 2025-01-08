@@ -1,56 +1,79 @@
-## Introducción
+# Sistema de Análisis de Imágenes Térmicas Volcánicas
 
-Este repositorio está dedicado a la comprensión y análisis de imágenes térmicas de volcanes en Ecuador. Utilizamos la librería `flirpy` para procesar y visualizar datos térmicos capturados de diferentes volcanes. Este proyecto tiene como objetivo inicial ayudar a los investigadores y científicos a interpretar mejor los datos térmicos y mejorar la monitorización y análisis de la actividad volcánica en la región.
+## Descripción General
+Sistema de aprendizaje profundo para el monitoreo automatizado de actividad volcánica mediante imágenes térmicas. El proyecto implementa una arquitectura de Red Neuronal Convolucional Multi-Rama para el procesamiento de imágenes térmicas FLIR, alcanzando una precisión del 98.86% en la detección de eventos de emisión.
 
+## Características
+- Procesamiento de imágenes térmicas brutas (.fff) mediante Flirpy
+- Análisis de tensores multidimensionales para reconocimiento de patrones temporales
+- Detección automatizada de bordes y análisis de umbrales térmicos
+- Integración con PostgreSQL para gestión de metadatos
+- Capacidades de predicción en tiempo real
 
+## Arquitectura
+El sistema emplea una arquitectura neural de tres ramas:
+1. Rama térmica: Procesa datos de temperatura corregidos
+2. Rama de detección de bordes: Analiza características morfológicas
+3. Rama de umbrales: Evalúa anomalías térmicas
 
-## Configuración del Entorno de Trabajo
+## Estructura del Proyecto
+proyecto/
+├── data/
+│   ├── input/           # Imágenes térmicas .fff brutas
+│   ├── processed/       # Tensores preprocesados
+│   └── output/          # Predicciones del modelo
+├── src/
+│   ├── data/           # Módulos de procesamiento de datos
+│   ├── features/       # Extracción de características
+│   ├── models/         # Implementación de red neuronal
+│   └── utils/          # Funciones auxiliares y visualización
+└── notebooks/          # Cuadernos de desarrollo
+├── 01_DataPreprocessing
+├── 02_FeatureEngineering
+├── 03_ModelTraining
+└── 04_Prediction
 
-Para un entorno limpio y organizado, se recomienda utilizar un entorno virtual. Sigue estos pasos para configurar el entorno y ejecutar el proyecto.
-
-
-
-## Clonar el repositorio
-
-
-Clona este repositorio en tu máquina local:
-
+## Instalación
 ```bash
-git clone https://github.com/DiversaStudio/volcanes_ml.git
-cd volcanes_ml
+# Clonar repositorio
+git clone https://github.com/username/analisis-termico-volcanico.git
 
-
-
- Preparar e Instalar la Librería flirpy
-
-La librería flirpy es necesaria para manejar los datos térmicos en este proyecto. Sigue estos pasos para instalarla:
-
-1. ### Clona el repositorio de `flirpy`:
-
-
-git clone https://github.com/LJMU-Astroecology/flirpy.git
-cd flirpy
-
-2. ### Instala las dependencias de flirpy:
+# Instalar dependencias
 pip install -r requirements.txt
 
+# Configurar base de datos PostgreSQL
+psql -U postgres -f setup/database.sql
+```
+## Métricas de Rendimiento
 
-3. ### Instala flirpy localmente:
-pip install .
+Detección de Emisiones: 98.86%
+Detección de Cielo Despejado: 87.70%
+Condiciones Nubladas: 81.25%
 
+## Entrenamiento
+El modelo fue entrenado con 7,024 imágenes térmicas bajo la siguiente configuración:
 
-## Crear y Activar un Entorno Virtual
+Tamaño de lote: 250
+Tasa de aprendizaje: 0.001
+Tasa de dropout: 0.6
+Paciencia para parada temprana: 7
 
-Para aislar las dependencias, crea y activa un entorno virtual con los siguientes comandos:
-En Windows
-python -m venv env
-env\Scripts\activate
+## Citación
+Si utiliza este código en su investigación, por favor cite:
+@article{
+  title={Monitoreo de Actividad Volcánica Utilizando Arquitectura CNN Multi-Rama},
+  author={Mosquera, D. & Gallegos, F, 2024.},
+  journal={Pending},
+  year={2025}
+}
 
-En MacOS / Linux
-python3 -m venv env
-source env/bin/activate
+## Agradecimientos
 
-4. ###  Instalar Dependencias del Proyecto
+Instituto Geofísico de la Escuela Politécnica Nacional de Ecuador
+Centro de Modelización Matemática (MODEMAT) de la Escuela Politécnica Nacional de Ecuador
+Investigación respaldada por el Proyecto PIGR-22-03
 
-Con el entorno virtual activo, instala las dependencias necesarias ejecutando:
-pip install -r requirements.txt
+## Contacto
+
+Email: hello@diversa.studio
+Institución: Diversa
