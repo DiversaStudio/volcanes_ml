@@ -17,21 +17,23 @@ El sistema emplea una arquitectura neural de tres ramas:
 3. Rama de umbrales: Evalúa anomalías térmicas
 
 ## Estructura del Proyecto
+```plaintext
 proyecto/
 ├── data/
 │   ├── input/           # Imágenes térmicas .fff brutas
 │   ├── processed/       # Tensores preprocesados
 │   └── output/          # Predicciones del modelo
 ├── src/
-│   ├── data/           # Módulos de procesamiento de datos
-│   ├── features/       # Extracción de características
-│   ├── models/         # Implementación de red neuronal
-│   └── utils/          # Funciones auxiliares y visualización
-└── notebooks/          # Cuadernos de desarrollo
-├── 01_DataPreprocessing
-├── 02_FeatureEngineering
-├── 03_ModelTraining
-└── 04_Prediction
+│   ├── data/            # Módulos de procesamiento de datos
+│   ├── features/        # Extracción de características
+│   ├── models/          # Implementación de red neuronal
+│   └── utils/           # Funciones auxiliares y visualización
+└── notebooks/           # Cuadernos de desarrollo
+    ├── 01_DataPreprocessing
+    ├── 02_FeatureEngineering
+    ├── 03_ModelTraining
+    └── 04_Prediction
+```
 
 ## Instalación
 ```bash
@@ -60,13 +62,14 @@ Paciencia para parada temprana: 7
 
 ## Citación
 Si utiliza este código en su investigación, por favor cite:
+```bash
 @article{
   title={Monitoreo de Actividad Volcánica Utilizando Arquitectura CNN Multi-Rama},
   author={Mosquera, D. & Gallegos, F, 2024.},
   journal={Pending},
   year={2025}
 }
-
+```
 ## Agradecimientos
 
 Instituto Geofísico de la Escuela Politécnica Nacional de Ecuador
