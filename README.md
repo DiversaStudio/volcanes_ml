@@ -66,7 +66,7 @@ Si utiliza este código en su investigación, por favor cite:
 @article{
   title={Monitoreo de Actividad Volcánica Utilizando Arquitectura CNN Multi-Rama},
   affiliation={1:Diversa, 2:EPN},
-  contributhors={Mosquera, Diana & Gallegos, Francisco & Vasconez, Juan & Merino, Pedro},  
+  contributhors={Mosquera, Diana [1] & Gallegos, Francisco [1] & Vasconez, Juan [1] & Merino, Pedro [2]},  
   journal={Pending},
   year={2025}
 }
