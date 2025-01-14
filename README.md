@@ -73,9 +73,8 @@ Si utiliza este código en su investigación, por favor cite:
 ```
 ## Agradecimientos
 
-Instituto Geofísico de la Escuela Politécnica Nacional de Ecuador
-Centro de Modelización Matemática (MODEMAT) de la Escuela Politécnica Nacional de Ecuador
-Investigación respaldada por el Proyecto PIGR-22-03
+- Instituto Geofísico de la Escuela Politécnica Nacional de Ecuador
+- Centro de Modelización Matemática (MODEMAT) de la Escuela Politécnica Nacional de Ecuador
 
 ## Contacto
 
