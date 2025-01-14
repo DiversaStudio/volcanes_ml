@@ -79,4 +79,5 @@ Investigación respaldada por el Proyecto PIGR-22-03
 ## Contacto
 
 Email: hello@diversa.studio
-Institución: Diversa
+Diversa
+
