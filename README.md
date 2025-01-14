@@ -7,7 +7,7 @@ Sistema de aprendizaje profundo para el monitoreo automatizado de actividad volc
 - Procesamiento de imágenes térmicas brutas (.fff) mediante Flirpy
 - Análisis de tensores multidimensionales para reconocimiento de patrones temporales
 - Detección automatizada de bordes y análisis de umbrales térmicos
-- Integración con PostgreSQL para gestión de metadatos
+- Integración con PostgreSQL para gestión de metadatos y resultados
 - Predicción de nuevas imágenes
 
 ## Arquitectura
