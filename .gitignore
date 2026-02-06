@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+volcanesML/
+.venv
+
+# Jupyter
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Full dataset directory (too large for git)
+# Use data-sample/ for version control instead
+data/
+
+# Keep sample data directory
+!data-sample/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Claude Code / AI Assistant artifacts
+.claude/
+*.jsonl
+*_plan.md
+*_PLAN.md
+IMPLEMENTATION_SUMMARY.md
+CONFIG_USAGE_GUIDE.md
+CLEANUP_CHECKLIST.md
+claude_session_*.txt
+.claude_history
+claude_memory/
+
+# Environment files
+.env
+.env.local
+
+# Figures (generated)
+figures/*.png
+!figures/Data_Distribution.png
+
+# Temporary files
+*.tmp
+*.log
+*.cache

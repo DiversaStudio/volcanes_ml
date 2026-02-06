@@ -1,0 +1,68 @@
+# VolcanesML Configuration File
+
+# Project paths (relative to project root)
+paths:
+  data_root: "data"
+  input: "data/input"
+  processed: "data/processed"
+  results: "data/results"
+  figures: "figures"
+  models: "data/processed/models"
+
+# Data loading settings
+data:
+  allowed_labels: ["Despejado", "Nublado", "Emisiones", "Flujo"]
+  limit_per_directory: null  # Set to integer for testing, null for all
+  batch_size: 500  # Memory-efficient processing batch size
+
+# Image dimensions
+image:
+  original_height: 480
+  original_width: 640
+  target_height: 240
+  target_width: 320
+
+# Thermal threshold settings (Celsius)
+thresholds:
+  cotopaxi:
+    low: 0.1
+    medium: 2.0
+    high: 5.0
+    very_high: 10.0
+  reventador:
+    low: 1.0
+    medium: 10.0
+    high: 30.0
+    very_high: 60.0
+
+# Model architecture
+model:
+  n_classes: 4
+  dropout_rate: 0.6
+  input_channels:
+    corrected: 1
+    edge: 1
+    threshold: 4
+
+# Training hyperparameters
+training:
+  batch_size: 250
+  n_epochs: 25
+  learning_rate: 0.001
+  weight_decay: 1.0e-4
+  early_stopping_patience: 7
+  early_stopping_min_delta: 1.0e-4
+  lr_scheduler_patience: 3
+  lr_scheduler_factor: 0.5
+  lr_scheduler_min_lr: 1.0e-6
+  train_val_split: 0.8
+
+# Label mapping (4 classes)
+labels:
+  Despejado: 0    # Clear/No activity
+  Nublado: 1      # Cloudy conditions
+  Emisiones: 2    # Emissions
+  Flujo: 3        # Lava flow
+
+# Device configuration
+device: "auto"  # Options: "cuda", "cpu", "auto"
