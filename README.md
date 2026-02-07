@@ -422,12 +422,12 @@ To reproduce published results:
 If you use this code or dataset, please cite:
 
 ```bibtex
-@software{volcanesml2025,
-  title={VolcanesML: Volcanic Thermal Image Classification},
-  author={Geophysical Institute, Escuela Politécnica Nacional},
-  year={2025},
+@software{volcanesML,
+  title={Classification of volcanic states},
+  author={Diversa & Instituto Geofísico EPN},
+  year={2026},
   url={https://github.com/your-org/volcanesml},
-  note={Multi-branch CNN for automated volcanic activity monitoring}
+  note={Multi-branch CNN for automated volcanic state classification}
 }
 ```
 
@@ -449,7 +449,7 @@ The `data-sample/` directory contains ~35-40 thermal images representing all vol
 
 To obtain the **complete dataset** (10,560 thermal images, ~6.5GB):
 
-**Contact**: Geophysical Institute - Escuela Politécnica Nacional (IG-EPN)
+**Contact**: Instituto Geofísico EPN (IG-EPN)
 **Website**: https://www.igepn.edu.ec/
 **Email**: svallejo@igepn.edu.ec
 **Data**: Available upon request for research and educational purposes
@@ -475,6 +475,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Maintained by**: Geophysical Institute - EPN
+**Maintained by**: Instituto Geofísico EPN
 **Status**: Production-ready (v1.0.0)
 **Last Updated**: February 2025
