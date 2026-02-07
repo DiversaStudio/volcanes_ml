@@ -2,8 +2,7 @@
 
 **Target Audience**: Systems Engineers at IG-EPN
 **Objective**: Deploy production-ready volcanic activity classification system
-**Duration**: 3-4 hours hands-on workshop
-**Last Updated**: February 2025
+**Last Updated**: February 2026
 
 ---
 
@@ -1515,14 +1514,14 @@ monitoring:
 
 - **Elevation**: 5,897m
 - **Camera distance**: ~10-15 km
-- **Classes**: Despejado, Nublado, Emisiones (no Flujo)
+- **Classes**: Despejado, Nublado, Emisiones
 - **Typical temperatures**: -5°C to 15°C (ambient), up to 100°C (emissions)
 
 ### Reventador Characteristics
 
 - **Elevation**: 3,562m
 - **Camera distance**: ~5-8 km
-- **Classes**: All 4 classes including Flujo
+- **Classes**: Nublado, Emisiones, Flujo
 - **Typical temperatures**: 5°C to 25°C (ambient), 200-800°C (lava flows)
 - **Note**: More frequent eruptive activity
 
@@ -1570,11 +1569,9 @@ print(torch.cuda.memory_summary())
 
 **Technical Support:**
 - Email: svallejo@igepn.edu.ec
-- Repository: https://github.com/your-org/volcanesml
 
 **Documentation:**
 - README: [README.md](README.md)
-- AI Guide: [CLAUDE.md](CLAUDE.md)
 
 **Contributors:**
 - **Diversa**: Model architecture & development
@@ -1582,7 +1579,6 @@ print(torch.cuda.memory_summary())
 
 ---
 
-**End of Workshop Guide**
-
-Last updated: February 2025
+Last updated: February 2026
 Version: 1.0.0
+
