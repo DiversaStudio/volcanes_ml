@@ -10,7 +10,7 @@ setup(
     description="Volcanic thermal imaging classification using multi-branch CNNs",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Geophysical Institute - EPN",
+    author="Diversa + IGEPN",
     author_email="",
     url="https://github.com/your-org/volcanesml",
     packages=find_packages(),
