@@ -11,7 +11,7 @@ This project uses **two separate data directories** with different purposes.
 | Feature | `data-sample/` | `data/` |
 |---------|----------------|---------|
 | **In Git?** | ✅ Yes | ❌ No (gitignored) |
-| **Size** | ~12-20 MB | ~50-60 GB |
+| **Size** | ~12-20 MB | ~15 GB |
 | **Files** | ~35 FFF files | ~10,603 FFF files |
 | **Sampling** | 0.33% (5 per class) | 100% (complete) |
 | **Use for** | Quick testing, demos | Production training |
@@ -54,13 +54,6 @@ data-sample/                   # ~12 MB total
 
 ### Expected Performance
 ⚠️ **Low accuracy (40-60%)** due to insufficient training data
-
-**Training metrics**:
-- Training samples: ~28
-- Validation samples: ~7
-- Epochs to convergence: 5-10
-- Training time: ~30 seconds
-
 **This is normal and expected!** The sample data is only for testing code, not training production models.
 
 ---
@@ -109,9 +102,9 @@ data/                          # ~50-60 GB total (NOT IN GIT)
 - Training time: ~5-10 minutes
 
 ### Obtaining Full Dataset
-**Contact**: Geophysical Institute - Escuela Politécnica Nacional (IG-EPN)
+**Contact**: Institito Geofísico-EPN
 **Website**: https://www.igepn.edu.ec/
-**Email**: Contact via website
+**Email**: *svallejo@igepn.edu.ec
 **Purpose**: Available for research and educational use
 
 ---
@@ -140,46 +133,6 @@ paths:
   results: "data/results"
 ```
 
----
-
-## Switching Between Datasets
-
-### Method 1: Edit config.yaml (Recommended)
-
-Edit `config/config.yaml` and change the paths:
-
-```yaml
-# For sample data
-paths:
-  input: "data-sample/input"
-
-# For full data
-paths:
-  input: "data/input"
-```
-
-### Method 2: Environment Variable
-
-```python
-import os
-USE_SAMPLE = os.getenv('USE_SAMPLE_DATA', 'false').lower() == 'true'
-data_dir = 'data-sample' if USE_SAMPLE else 'data'
-```
-
-Run with:
-```bash
-USE_SAMPLE_DATA=true jupyter notebook notebooks/01_DataPreprocessing.ipynb
-```
-
-### Method 3: Command Line Argument
-
-```bash
-python train.py --data-dir data-sample/
-python train.py --data-dir data/
-```
-
----
-
 ## Git Handling
 
 ### .gitignore Rules
@@ -200,7 +153,7 @@ data/
 - `data-sample/` directory structure
 
 ❌ **Excluded from git**:
-- `data/` entire directory (~60 GB)
+- `data/` entire directory (~15 GB)
 - `data-sample/processed/` (generated files)
 - `data-sample/results/` (generated files)
 
@@ -221,78 +174,6 @@ python scripts/sample_data.py --fixed-count 10
 # Percentage-based sampling
 python scripts/sample_data.py --percentage 0.1 --min-files 5
 ```
-
-### Advanced Options
-```bash
-# Custom minimum/maximum
-python scripts/sample_data.py --fixed-count 10 --max-files 15
-
-# Percentage with constraints
-python scripts/sample_data.py --percentage 0.05 --min-files 3 --max-files 10
-```
-
-### Script Output
-```
-======================================================================
-FFF File Sampling for data-sample Directory
-======================================================================
-Mode: Fixed count (5 files per directory)
-
-✓ Cotopaxi/Despejado:
-    Original: 3,127 files
-    Sampled: 5 files (0.16%)
-    Files: CTP_RUMHIR_20220805_1950.fff, ...
-
-...
-
-======================================================================
-Summary:
-  Total original files: 10,603
-  Total sampled files: 35
-  Overall sampling rate: 0.330%
-  Estimated sample size: ~21.0 MB
-======================================================================
-```
-
----
-
-## Verification
-
-### Check Sample Data
-```bash
-# File count
-find data-sample/input -name "*.fff" | wc -l
-# Should show: 35
-
-# Total size
-du -sh data-sample/
-# Should show: ~12-20M
-
-# Files per directory
-for dir in data-sample/input/*/*/; do
-    echo "$dir: $(ls $dir/*.fff 2>/dev/null | wc -l) files"
-done
-# Each should show: 5 files
-```
-
-### Check Full Data (if available)
-```bash
-# File count
-find data/input -name "*.fff" | wc -l
-# Should show: ~10,603
-
-# Total size
-du -sh data/
-# Should show: ~50-60G
-
-# Class distribution
-for dir in data/input/*/*/; do
-    echo "$dir: $(ls $dir/*.fff 2>/dev/null | wc -l) files"
-done
-```
-
----
-
 ## Common Issues
 
 ### Issue: "No files found in data/"
@@ -342,55 +223,3 @@ data/
 - Document how to obtain full dataset in README
 
 ---
-
-## Performance Comparison
-
-| Metric | data-sample/ | data/ |
-|--------|--------------|-------|
-| **Training samples** | ~28 | ~8,448 |
-| **Validation samples** | ~7 | ~2,112 |
-| **Training time** | ~30 sec | ~5-10 min |
-| **Train accuracy** | ~50-70% | ~94.2% |
-| **Val accuracy** | ⚠️ ~40-60% | ✅ ~94.6% |
-| **Overfitting risk** | High | Low |
-| **Generalization** | Poor | Excellent |
-| **Production ready** | ❌ No | ✅ Yes |
-
----
-
-## FAQs
-
-**Q: Should I use data-sample/ or data/ for training?**
-A: Use `data-sample/` for testing code, `data/` for production models.
-
-**Q: Why is accuracy only 40% with data-sample/?**
-A: 35 images is insufficient for deep learning. This is expected and normal.
-
-**Q: Can I add more files to data-sample/?**
-A: Yes, run `python scripts/sample_data.py --fixed-count 10` for 10 files per class (~24MB).
-
-**Q: How do I get the full data/?**
-A: Contact IG-EPN (https://www.igepn.edu.ec/) and request access.
-
-**Q: Will data/ be committed to git?**
-A: No, it's in `.gitignore`. Only `data-sample/` is committed.
-
-**Q: Can I use data-sample/ for production?**
-A: ❌ No. You need full `data/` for 94.6% accuracy.
-
----
-
-## Summary
-
-- ✅ **data-sample/** = Small sample for testing (INCLUDED in git)
-- ❌ **data/** = Full dataset for production (NOT in git)
-- 📝 Use **config.yaml** to switch between them
-- 🎯 Expect low accuracy with sample data (this is normal)
-- 📧 Contact **IG-EPN** to obtain full dataset
-
----
-
-**Created**: February 6, 2025
-**Sample Files**: 35 FFF files (~12 MB)
-**Full Dataset**: 10,603 FFF files (~50-60 GB)
-**Sampling Rate**: 0.33%
